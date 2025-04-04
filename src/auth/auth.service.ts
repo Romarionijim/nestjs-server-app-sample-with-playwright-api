@@ -40,27 +40,27 @@ export class AuthService {
     };
   }
 
-  async login(user: UserDto) {
-    const currentUser = await this.usersService.findOneByUsername(user.username);
-    if (!currentUser) {
-      throw new NotFoundException();
-    }
-    const isPasswordValid = await bcrypt.compare(user.password, currentUser.password)
-    if (!isPasswordValid) {
-      throw new ForbiddenException();
-    }
+  async login(username: string, password: string) {
+    const currentUser = await this.usersService.findOneByUsername(username);
+    if (currentUser) {
+      const isPasswordValid = await bcrypt.compare(password, currentUser.password)
 
-    const { password, ...userWithoutExposedPassword } = currentUser;
+      if (isPasswordValid) {
+        const { password, ...userWithoutExposedPassword } = currentUser;
 
-    const payLoadToSign = {
-      sub: currentUser.id,
-      username: currentUser.username,
-      roles: currentUser.roles
+        const payLoadToSign = {
+          sub: currentUser.id,
+          username: currentUser.username,
+          roles: currentUser.roles
+        }
+
+        return {
+          ...userWithoutExposedPassword,
+          access_token: await this.jwtService.signAsync(payLoadToSign)
+        };
+      }
+
+      return null;
     }
-
-    return {
-      ...userWithoutExposedPassword,
-      access_token: await this.jwtService.signAsync(payLoadToSign)
-    };
   }
 }
