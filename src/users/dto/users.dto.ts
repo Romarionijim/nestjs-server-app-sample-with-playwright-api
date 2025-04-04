@@ -4,4 +4,5 @@ export class UserDto {
   username: string;
   password: string;
   hobbie: string;
+  roles: string[]
 }
