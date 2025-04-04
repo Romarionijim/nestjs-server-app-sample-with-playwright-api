@@ -21,7 +21,8 @@ export class AuthService {
 
     const registeredUser = {
       ...userData,
-      password: hashedPassword
+      password: hashedPassword,
+      roles: userData.roles || ['user']
     }
 
     console.log('about to add: ', registeredUser);
