@@ -10,7 +10,8 @@ export class UsersService {
       lastName: 'Doe',
       username: 'johndoe',
       password: 'password1234',
-      hobbie: 'Basketball'
+      hobbie: 'Basketball',
+      roles: ['admin']
     },
     {
       id: 2,
@@ -18,7 +19,8 @@ export class UsersService {
       lastName: 'Smith',
       username: 'janesmith',
       password: 'password1234',
-      hobbie: 'Tennis'
+      hobbie: 'Tennis',
+      roles: ['user']
     },
   ]
 
@@ -36,6 +38,10 @@ export class UsersService {
   async findOne(id: number) {
     const user = this.usersInMemoryData.find((user) => user.id === id);
     return user ? { ...user, password: 'secret' } : []
+  }
+
+  async findOneByUsername(username: string) {
+    return this.usersInMemoryData.find((user) => user.username === username);
   }
 
   async createUser(user: UserDto) {
