@@ -11,6 +11,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get()
+  @ApiQuery({ required: false })
   async findAll(@Query() query: Partial<UserDto> = {}) {
     return this.usersService.findAll(query);
   }
