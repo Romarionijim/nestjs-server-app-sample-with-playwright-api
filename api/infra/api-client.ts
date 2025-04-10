@@ -32,6 +32,14 @@ export class ApiClient {
     return await this.makeHttpRequest(RequestMethod.DELETE, endpoint, options);
   }
 
+  async getToken() {
+    return this.access_token;
+  }
+
+  async setToken(token: string) {
+    this.access_token = token;
+  }
+
   private async makeHttpRequest<T>(method: RequestMethod, endPoint: string, options: RequestOptions<T> = {}) {
     let response: APIResponse;
     let headers: Record<string, string> = {
@@ -39,10 +47,8 @@ export class ApiClient {
       'Accept': '*/*'
     }
 
-    if (method !== RequestMethod.GET) {
-      const authAccessToken = await this.getAccessToken(options, headers);
-      headers['Authorization'] = `Bearer ${authAccessToken}`;
-    }
+    const authAccessToken = await this.getAccessToken(options, headers);
+    headers['Authorization'] = `Bearer ${authAccessToken}`;
 
     switch (method) {
       case RequestMethod.GET:
