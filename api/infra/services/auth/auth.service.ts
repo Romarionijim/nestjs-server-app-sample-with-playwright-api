@@ -5,7 +5,6 @@ import { ApiClient } from "api/infra/api-client";
 import { UserDto } from "src/users/dto/users.dto";
 
 export class AuthService extends ApiClient {
-  public token: string;
 
   constructor(request: APIRequestContext) {
     super(request, BaseUrl.LOCAL_HOST);
@@ -20,7 +19,8 @@ export class AuthService extends ApiClient {
   }
 
   async getProfile(credentials: { username?: string, password?: string } = {}) {
-    if (!this.token && credentials.username && credentials.password) {
+    const isAuthenticated = await this.isAuthenticated();
+    if (!isAuthenticated && credentials.username && credentials.password) {
       const response = await this.login(
         {
           username: credentials.username,

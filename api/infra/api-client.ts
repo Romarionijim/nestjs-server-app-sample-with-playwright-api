@@ -40,6 +40,10 @@ export class ApiClient {
     this.access_token = token;
   }
 
+  async isAuthenticated() {
+    return !!this.access_token;
+  }
+
   private async makeHttpRequest<T>(method: RequestMethod, endPoint: string, options: RequestOptions<T> = {}) {
     let response: APIResponse;
     let headers: Record<string, string> = {
@@ -79,6 +83,10 @@ export class ApiClient {
       await this.request.post(`${this.baseUrl}/register`, { data: registerData.data, headers })
       const loginResponse = await this.request.post(`${this.baseUrl}/login`, { data: registerData.data, headers })
       const { access_token } = await loginResponse.json();
+      if (!access_token) {
+        throw new Error('Failed to get access token after login');
+      }
+      await this.setToken(access_token);
       return access_token;
     }
     return this.access_token;
