@@ -1,5 +1,5 @@
-export class RequestOptions {
-  queryParams?: { [key: string]: string | number | boolean; } | URLSearchParams | undefined
+export class RequestOptions<T> {
+  queryParams?: { [key: string]: string | number | boolean; }
   multiPartData?: boolean
-  data?: { [key: string]: string | number | boolean; }
+  data?: T
 }
