@@ -12,27 +12,27 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  async get(endpoint: string, options: RequestOptions = {}) {
+  async get<T>(endpoint: string, options: RequestOptions<T> = {}) {
     return await this.makeHttpRequest(RequestMethod.GET, endpoint, options);
   }
 
-  async post(endpoint: string, options: RequestOptions = {}) {
+  async post<T>(endpoint: string, options: RequestOptions<T> = {}) {
     return await this.makeHttpRequest(RequestMethod.POST, endpoint, options);
   }
 
-  async put(endpoint: string, options: RequestOptions = {}) {
+  async put<T>(endpoint: string, options: RequestOptions<T> = {}) {
     return await this.makeHttpRequest(RequestMethod.PUT, endpoint, options);
   }
 
-  async patch(endpoint: string, options: RequestOptions = {}) {
+  async patch<T>(endpoint: string, options: RequestOptions<T> = {}) {
     return await this.makeHttpRequest(RequestMethod.PATCH, endpoint, options);
   }
 
-  async delete(endpoint: string, options: RequestOptions = {}) {
+  async delete<T>(endpoint: string, options: RequestOptions<T> = {}) {
     return await this.makeHttpRequest(RequestMethod.DELETE, endpoint, options);
   }
 
-  private async makeHttpRequest(method: RequestMethod, endPoint: string, options: RequestOptions = {}) {
+  private async makeHttpRequest<T>(method: RequestMethod, endPoint: string, options: RequestOptions<T> = {}) {
     let response: APIResponse;
     let headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -65,8 +65,8 @@ export class ApiClient {
     return response;
   }
 
-  private async getAccessToken(
-    registerData: RequestOptions,
+  private async getAccessToken<T>(
+    registerData: RequestOptions<T>,
     headers: Record<string, string>,
   ) {
     if (!this.access_token) {
