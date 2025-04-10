@@ -30,7 +30,7 @@ export class UsersService {
       lastName: 'James',
       username: 'sarajames',
       password: 'password1234',
-      hobbie: 'VolleyBall',
+      hobbie: 'Volleyball',
       gender: 'female',
       roles: ['user']
     },
