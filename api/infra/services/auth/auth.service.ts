@@ -2,7 +2,7 @@ import { APIRequestContext } from "@playwright/test";
 import { BaseUrl } from "api/enums/application-urls.enum";
 import { EndPoint } from "api/enums/endpoints.enum";
 import { ApiClient } from "api/infra/api-client";
-import { UserDto } from "src/users/dto/users.dto";
+import { UserDto } from "@backend";
 
 export class AuthService extends ApiClient {
   public token: string;
