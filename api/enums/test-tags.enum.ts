@@ -1,4 +1,4 @@
 export enum TestTags {
-  USERS = 'users',
-  AUTH = 'auth'
+  USERS = '@users',
+  AUTH = '@auth'
 }
