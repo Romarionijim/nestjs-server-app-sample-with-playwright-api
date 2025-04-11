@@ -1,4 +1,3 @@
-import { Req } from "@nestjs/common";
 import { APIRequestContext, APIResponse } from "@playwright/test";
 import { RequestMethod } from "api/enums/request-methods.enum";
 import { RequestOptions } from "api/types/request.types";
