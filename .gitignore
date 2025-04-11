@@ -63,5 +63,7 @@ node_modules/
 /test-results/
 /playwright-report/
 **/playwright-report/
+**/results.json
+**/results.xml
 /blob-report/
 /playwright/.cache/
