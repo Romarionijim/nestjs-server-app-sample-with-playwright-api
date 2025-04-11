@@ -60,12 +60,4 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', a
     expect(responseObj).toBeDefined();
     expect(responseObj).toStrictEqual(inMemoryData);
   })
-
-  // test('should get user with relevant query param - [GET] /users?query=value', async () => {
-
-  // })
-
-  // test('should get specific user with id', async () => {
-
-  // })
 })
