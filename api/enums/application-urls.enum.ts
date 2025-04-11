@@ -1,3 +1,3 @@
 export enum BaseUrl {
-  LOCAL_HOST = 'http://localhost:3000/'
+  LOCAL_HOST = 'http://localhost:3000'
 }

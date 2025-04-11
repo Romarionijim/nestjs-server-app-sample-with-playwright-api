@@ -2,7 +2,7 @@ import { APIRequestContext } from "@playwright/test";
 import { BaseUrl } from "api/enums/application-urls.enum";
 import { EndPoint } from "api/enums/endpoints.enum";
 import { ApiClient } from "api/infra/api-client";
-import { UserDto } from "src/users/dto/users.dto";
+import { User } from "api/types/user/user.types";
 
 export class AuthService extends ApiClient {
 
@@ -10,7 +10,7 @@ export class AuthService extends ApiClient {
     super(request, BaseUrl.LOCAL_HOST);
   }
 
-  async register(data: UserDto) {
+  async register(data: User) {
     return await this.post(EndPoint.REGISTER, { data });
   }
 

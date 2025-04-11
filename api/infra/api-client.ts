@@ -1,4 +1,3 @@
-import { Req } from "@nestjs/common";
 import { APIRequestContext, APIResponse } from "@playwright/test";
 import { RequestMethod } from "api/enums/request-methods.enum";
 import { RequestOptions } from "api/types/request.types";
@@ -51,8 +50,10 @@ export class ApiClient {
       'Accept': '*/*'
     }
 
-    const authAccessToken = await this.getAccessToken(options, headers);
-    headers['Authorization'] = `Bearer ${authAccessToken}`;
+    if (options.isAuthRequired) {
+      const authAccessToken = await this.getAccessToken(options, headers);
+      headers['Authorization'] = `Bearer ${authAccessToken}`;
+    }
 
     switch (method) {
       case RequestMethod.GET:
@@ -76,13 +77,24 @@ export class ApiClient {
   }
 
   private async getAccessToken<T>(
-    registerData: RequestOptions<T>,
+    options: RequestOptions<T>,
     headers: Record<string, string>,
   ) {
     if (!this.access_token) {
-      await this.request.post(`${this.baseUrl}/register`, { data: registerData.data, headers })
-      const loginResponse = await this.request.post(`${this.baseUrl}/login`, { data: registerData.data, headers })
-      const { access_token } = await loginResponse.json();
+
+      if (!options.data || !options.data['username'] || !options.data['password']) {
+        throw new Error('Username and password are required for authentication');
+      }
+
+      const credentials = {
+        username: options.data['username'],
+        password: options.data['password']
+      };
+
+      await this.request.post(`${this.baseUrl}/register`, { data: options.data, headers })
+      const responseBody = await this.request.post(`${this.baseUrl}/login`, { data: credentials, headers })
+      const { access_token } = await responseBody.json();
+
       if (!access_token) {
         throw new Error('Failed to get access token after login');
       }

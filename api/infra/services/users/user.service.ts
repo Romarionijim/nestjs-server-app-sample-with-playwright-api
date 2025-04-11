@@ -2,7 +2,7 @@ import { ApiClient } from "api/infra/api-client";
 import { APIRequestContext } from "@playwright/test";
 import { BaseUrl } from "api/enums/application-urls.enum";
 import { EndPoint } from "api/enums/endpoints.enum";
-import { UserDto } from "src/users/dto/users.dto";
+import { User } from "api/types/user/user.types";
 
 export class UsersService extends ApiClient {
   constructor(request: APIRequestContext) {
@@ -17,11 +17,11 @@ export class UsersService extends ApiClient {
     return await this.get(`${EndPoint.USERS}/${id}`);
   }
 
-  async createUser(userDto: UserDto) {
-    return await this.post(EndPoint.USERS, { data: userDto })
+  async createUser(user: User) {
+    return await this.post(EndPoint.USERS, { data: user })
   }
 
-  async updateUser(id: number, updatedFields: UserDto) {
+  async updateUser(id: number, updatedFields: User) {
     return await this.put(`${EndPoint.USERS}/${id}`, { data: updatedFields });
   }
 
