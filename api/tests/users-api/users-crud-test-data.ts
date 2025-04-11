@@ -1,4 +1,4 @@
-export const usersInMemoryData = [
+export const usersTestData = [
   {
     id: 1,
     name: 'John',
