@@ -1,12 +1,12 @@
-import { Faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
-export class MockData extends Faker {
+export class MockData {
   
   generateMockUser(gender: 'male' | 'female') {
-    const name = this.person.firstName(gender);
-    const lastName = this.person.lastName();
+    const name = faker.person.firstName(gender);
+    const lastName = faker.person.lastName();
     const username = `${name.toLowerCase()}${lastName.toLowerCase()}`;
-    const password = this.internet.password();
+    const password = faker.internet.password();
     const hobbie = this.generateSport();
     const roles = ['user'];
 
