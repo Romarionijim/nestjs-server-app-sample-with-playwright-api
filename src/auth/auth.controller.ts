@@ -5,6 +5,7 @@ import { AuthGuard } from './auth.guard';
 import { RolesGuard } from './roles/roles.guard';
 import { Role } from './roles/role.enum';
 import { Roles } from './roles/roles.decorator';
+import { Request as ExpressRequest } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,9 @@ export class AuthController {
   @Get('profile')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  async getProfile(@Request() request) {
-    return request.user;
+  async getProfile(@Request() request: ExpressRequest) {
+    if ('user' in request) {
+      return request.user;
+    }
   }
 }
