@@ -1,6 +1,6 @@
 import { Faker } from '@faker-js/faker';
 
-export class MockDataGenerator extends Faker {
+export class MockData extends Faker {
   
   generateMockUser(gender: 'male' | 'female') {
     const name = this.person.firstName(gender);
