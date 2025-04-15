@@ -18,7 +18,12 @@ export class UsersService extends ApiClient {
   }
 
   async createUser(user: User) {
-    return await this.post(EndPoint.USERS, { data: user })
+    // Only admin users can create other users via the POST /users endpoint
+    // We need to ensure we have an authenticated admin token for this request
+    return await this.post(EndPoint.USERS, { 
+      data: user, 
+      isAuthRequired: true 
+    });
   }
 
   async updateUser(id: number, updatedFields: User) {
