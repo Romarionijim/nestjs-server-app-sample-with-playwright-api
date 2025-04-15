@@ -8,18 +8,6 @@ import { User } from 'api/types/user/user.types';
 import { MockData } from 'api/utils/mocks/mocks';
 
 test.describe('Authentication api tests', { tag: TestTags.AUTH }, async () => {
-  // let authService: AuthService;
-  // let mockData: MockData;
-  // let mockUser: User;
-  // let accessToken: string;
-  // let sharedUsername: string;
-  // let sharedPassword: string;
-
-  // test.beforeEach(async ({ request }) => {
-  //   authService = new AuthService(request);
-  //   mockData = new MockData();
-  //   mockUser = mockData.generateMockUser();
-  // })
   let adminUser: User;
 
   test.beforeEach(async ({ mockUser }) => {
