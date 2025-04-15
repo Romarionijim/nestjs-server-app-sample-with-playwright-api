@@ -9,7 +9,6 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   let authService: AuthService;
   let mockData: MockData;
   
-  // Admin credentials to use throughout tests
   const adminCredentials = {
     username: `admin${Date.now()}`,
     password: 'adminPassword123'
@@ -20,7 +19,6 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     authService = new AuthService();
     mockData = new MockData();
     
-    // Authenticate once at the beginning
     await usersService.authenticate(adminCredentials.username, adminCredentials.password);
   });
 
@@ -31,10 +29,9 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     expect(response.status()).toBe(StatusCode.OK);
     expect(responseObj).toBeDefined();
     expect(responseObj).toStrictEqual(usersTestData);
-  })
+  });
 
   test('should get user by id - [GET] /users/:id', async () => {
-
     await test.step('get user by id 1', async () => {
       const response = await usersService.getUser(1);
       const userData = await response.json();
@@ -54,7 +51,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
       expect(userData.lastName).toBe('Smith');
       expect(userData.roles).toStrictEqual(['user']);
     });
-  })
+  });
 
   test('should get user by query params - [GET] /users?query=param', async () => {
     await test.step('query by hobbie 1', async () => {
@@ -115,7 +112,6 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
           roles: ['user']
         }
       ])
-
     });
 
     await test.step('query by male gender', async () => {
@@ -171,7 +167,6 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
   });
 
-
   test('create new user - [POST] /users @post', async () => {
     const userToCreate = mockData.generateMockUser();
     const response = await usersService.createUser(userToCreate);
@@ -183,15 +178,18 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
   test('update user - [PUT] /users/:id @put', async () => {
-    // Create a user first
     const userToCreate = mockData.generateMockUser();
     const createResponse = await usersService.createUser(userToCreate);
     const createdUser = await createResponse.json();
     
-    // Update the user
     const updatedFields = { 
       name: 'Updated Name',
-      lastName: 'Updated LastName'
+      lastName: 'Updated LastName',
+      username: 'updated_username',
+      password: 'updated_password',
+      hobbie: 'Updated Hobby',
+      gender: 'other',
+      roles: ['user']
     };
     
     const response = await usersService.updateUser(createdUser.id, updatedFields);
@@ -199,13 +197,11 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
   test('delete user - [DELETE] /users/:id @delete', async () => {
-    // Create a user first
     const userToCreate = mockData.generateMockUser();
     const createResponse = await usersService.createUser(userToCreate);
     const createdUser = await createResponse.json();
     
-    // Delete the user
     const response = await usersService.deleteUser(createdUser.id);
     expect(response.status()).toBe(StatusCode.OK);
   });
-})
+});

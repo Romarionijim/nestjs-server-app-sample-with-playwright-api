@@ -36,9 +36,7 @@ export class UsersService {
   }
 
   async createUser(user: User, adminCredentials?: { username: string, password: string }) {
-    // If admin credentials are provided, use them for authentication
     if (adminCredentials !== undefined) {
-      // Merge adminCredentials with user data for authentication
       const adminUser = {
         ...user,
         username: adminCredentials.username,
@@ -50,7 +48,6 @@ export class UsersService {
         isAuthRequired: true
       });
     } else {
-      // Use the user's own credentials
       return await this.apiClient.post(EndPoint.USERS, {
         data: user,
         isAuthRequired: true
