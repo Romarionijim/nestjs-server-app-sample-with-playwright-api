@@ -8,8 +8,8 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   let mockData: MockData;
 
   test.beforeEach(async ({ request }) => {
-    usersService = new UsersService(request);
-    authService = new AuthService(request);
+    usersService = new UsersService();
+    authService = new AuthService();
     mockData = new MockData();
   })
   
@@ -161,7 +161,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
 
-  test('create new user - [POST] /users', async() => {
+  test.skip('create new user - [POST] /users', async() => {
     //
   })
 })
