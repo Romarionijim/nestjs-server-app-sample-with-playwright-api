@@ -1,5 +1,6 @@
 import { APIRequestContext, APIResponse, request } from "@playwright/test";
 import { RequestMethod } from "api/enums/request-methods.enum";
+import { logger } from "api/logger/custom.logger";
 import { RequestOptions } from "api/types/request.types";
 
 export class ApiClient {
@@ -102,7 +103,6 @@ export class ApiClient {
     headers: Record<string, string>,
   ) {
     if (!this.access_token) {
-
       if (!options.data || !options.data['username'] || !options.data['password']) {
         throw new Error('Username and password are required for authentication');
       }
@@ -112,13 +112,36 @@ export class ApiClient {
         password: options.data['password']
       };
 
-      await this.requestContext.post(`${this.baseUrl}/register`, { data: options.data, headers })
-      const responseBody = await this.requestContext.post(`${this.baseUrl}/login`, { data: credentials, headers })
-      const { access_token } = await responseBody.json();
-
-      if (!access_token) {
-        throw new Error('Failed to get access token after login');
+      try {
+        const loginResponse = await this.requestContext.post(`${this.baseUrl}/login`, { 
+          data: credentials, 
+          headers 
+        });
+        
+        if (loginResponse.ok()) {
+          const { access_token } = await loginResponse.json();
+          await this.setToken(access_token);
+          return access_token;
+        }
+      } catch (error) {
+        logger.log('Login failed, attempting registration');
       }
+
+      await this.requestContext.post(`${this.baseUrl}/register`, { 
+        data: options.data,
+        headers 
+      });
+
+      const loginResponse = await this.requestContext.post(`${this.baseUrl}/login`, { 
+        data: credentials, 
+        headers 
+      });
+      
+      const { access_token } = await loginResponse.json();
+      if (!access_token) {
+        throw new Error('Failed to get access token after registration and login');
+      }
+      
       await this.setToken(access_token);
       return access_token;
     }
