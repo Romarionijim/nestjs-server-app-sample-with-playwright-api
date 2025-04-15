@@ -11,11 +11,25 @@ export class AuthService extends ApiClient {
   }
 
   async register(data: User) {
-    return await this.post(`${EndPoint.AUTH}/${EndPoint.REGISTER}`, { data });
+    const response = await this.post(`${EndPoint.AUTH}/${EndPoint.REGISTER}`, { data });
+    const responseBody = await response.json();
+    
+    if (responseBody.access_token) {
+      await this.setToken(responseBody.access_token);
+    }
+    
+    return response;
   }
 
   async login(credentials: { username: string, password: string }) {
-    return await this.post(`${EndPoint.AUTH}/${EndPoint.LOGIN}`, { data: credentials });
+    const response = await this.post(`${EndPoint.AUTH}/${EndPoint.LOGIN}`, { data: credentials });
+    const responseBody = await response.json();
+    
+    if (responseBody.access_token) {
+      await this.setToken(responseBody.access_token);
+    }
+    
+    return response;
   }
 
   async getProfile() {
