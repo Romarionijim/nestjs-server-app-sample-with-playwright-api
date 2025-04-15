@@ -1,33 +1,40 @@
-import { APIRequestContext, APIResponse } from "@playwright/test";
+import { APIRequestContext, APIResponse, request } from "@playwright/test";
 import { RequestMethod } from "api/enums/request-methods.enum";
 import { RequestOptions } from "api/types/request.types";
 
 export class ApiClient {
   protected baseUrl: string;
+  protected requestContext: APIRequestContext;
   private access_token: string;
+  private requestInitialized: Promise<void>;
 
-  constructor(public request: APIRequestContext, baseUrl: string) {
-    this.request = request;
+  constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
+    this.requestInitialized = this.initializeRequest();
   }
 
   async get<T>(endpoint: string, options: RequestOptions<T> = {}) {
+    await this.ensureRequestInitialized();
     return await this.makeHttpRequest(RequestMethod.GET, endpoint, options);
   }
 
   async post<T>(endpoint: string, options: RequestOptions<T> = {}) {
+    await this.ensureRequestInitialized();
     return await this.makeHttpRequest(RequestMethod.POST, endpoint, options);
   }
 
   async put<T>(endpoint: string, options: RequestOptions<T> = {}) {
+    await this.ensureRequestInitialized();
     return await this.makeHttpRequest(RequestMethod.PUT, endpoint, options);
   }
 
   async patch<T>(endpoint: string, options: RequestOptions<T> = {}) {
+    await this.ensureRequestInitialized();
     return await this.makeHttpRequest(RequestMethod.PATCH, endpoint, options);
   }
 
   async delete<T>(endpoint: string, options: RequestOptions<T> = {}) {
+    await this.ensureRequestInitialized();
     return await this.makeHttpRequest(RequestMethod.DELETE, endpoint, options);
   }
 
@@ -41,6 +48,12 @@ export class ApiClient {
 
   async isAuthenticated() {
     return !!this.access_token;
+  }
+
+  async dispose() {
+    if (this.requestContext) {
+      await this.requestContext.dispose();
+    }
   }
 
   private async makeHttpRequest<T>(method: RequestMethod, endPoint: string, options: RequestOptions<T> = {}) {
@@ -57,23 +70,31 @@ export class ApiClient {
 
     switch (method) {
       case RequestMethod.GET:
-        response = await this.request.get(`${this.baseUrl}/${endPoint}`, { params: options.queryParams, headers });
+        response = await this.requestContext.get(`${this.baseUrl}/${endPoint}`, { params: options.queryParams, headers });
         break;
       case RequestMethod.POST:
-        response = await this.request.post(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
+        response = await this.requestContext.post(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
         break;
       case RequestMethod.PUT:
-        response = await this.request.put(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
+        response = await this.requestContext.put(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
         break;
       case RequestMethod.PATCH:
-        response = await this.request.patch(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
+        response = await this.requestContext.patch(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
         break;
       case RequestMethod.DELETE:
-        response = await this.request.delete(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
+        response = await this.requestContext.delete(`${this.baseUrl}/${endPoint}`, { data: options.data, headers });
         break;
     }
 
     return response;
+  }
+
+  private async initializeRequest(): Promise<void> {
+    this.requestContext = await request.newContext();
+  }
+
+  private async ensureRequestInitialized(): Promise<void> {
+    await this.requestInitialized;
   }
 
   private async getAccessToken<T>(
@@ -91,8 +112,8 @@ export class ApiClient {
         password: options.data['password']
       };
 
-      await this.request.post(`${this.baseUrl}/register`, { data: options.data, headers })
-      const responseBody = await this.request.post(`${this.baseUrl}/login`, { data: credentials, headers })
+      await this.requestContext.post(`${this.baseUrl}/register`, { data: options.data, headers })
+      const responseBody = await this.requestContext.post(`${this.baseUrl}/login`, { data: credentials, headers })
       const { access_token } = await responseBody.json();
 
       if (!access_token) {

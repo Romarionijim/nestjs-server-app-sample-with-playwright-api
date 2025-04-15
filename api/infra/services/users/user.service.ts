@@ -1,38 +1,53 @@
 import { ApiClient } from "api/infra/api-client";
-import { APIRequestContext } from "@playwright/test";
 import { BaseUrl } from "api/enums/application-urls.enum";
 import { EndPoint } from "api/enums/endpoints.enum";
 import { User } from "api/types/user/user.types";
 
-export class UsersService extends ApiClient {
-  constructor(request: APIRequestContext) {
-    super(request, BaseUrl.LOCAL_HOST)
+export class UsersService {
+  private apiClient: ApiClient;
+
+  constructor() {
+    this.apiClient = new ApiClient(BaseUrl.LOCAL_HOST);
+  }
+
+  async authenticate(username: string, password: string) {
+    const response = await this.apiClient.post(EndPoint.LOGIN, {
+      data: { username, password },
+      isAuthRequired: true
+    });
+    const { access_token } = await response.json();
+    await this.apiClient.setToken(access_token);
+    return access_token;
   }
 
   async getAllUsers(queryParams?: { [key: string]: string | number | boolean; }) {
-    return await this.get(EndPoint.USERS, { queryParams });
+    return await this.apiClient.get(EndPoint.USERS, { queryParams });
   }
 
   async getUser(id: number) {
-    return await this.get(`${EndPoint.USERS}/${id}`);
+    return await this.apiClient.get(`${EndPoint.USERS}/${id}`);
   }
 
-  async createUser(user: User) {
-    return await this.post(EndPoint.USERS, {
+  async createUser(user: User, adminCredentials?: { username: string, password: string }) {
+    const isAuthenticated = await this.apiClient.isAuthenticated();
+    if(!isAuthenticated && adminCredentials !== undefined) {
+      await this.authenticate(adminCredentials.username, adminCredentials.password);
+    } 
+    return await this.apiClient.post(EndPoint.USERS, {
       data: user,
       isAuthRequired: true
     });
   }
 
   async updateUser(id: number, updatedFields: User) {
-    return await this.put(`${EndPoint.USERS}/${id}`, {
+    return await this.apiClient.put(`${EndPoint.USERS}/${id}`, {
       data: updatedFields,
       isAuthRequired: true
     });
   }
 
   async deleteUser(id: number) {
-    return await this.delete(`${EndPoint.USERS}/${id}`, {
+    return await this.apiClient.delete(`${EndPoint.USERS}/${id}`, {
       isAuthRequired: true
     });
   }

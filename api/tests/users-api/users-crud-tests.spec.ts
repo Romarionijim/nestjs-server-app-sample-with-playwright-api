@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { AuthService, TestTags, StatusCode, UsersService, MockData } from '@api-infra';
 import { usersTestData } from './users-crud-test-data';
+import { logger } from 'api/logger/custom.logger';
 
 test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
   let usersService: UsersService;
@@ -8,11 +9,11 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   let mockData: MockData;
 
   test.beforeEach(async ({ request }) => {
-    usersService = new UsersService(request);
-    authService = new AuthService(request);
+    usersService = new UsersService();
+    authService = new AuthService();
     mockData = new MockData();
   })
-  
+
   test('should get all users - [GET] /users', async () => {
     const response = await usersService.getAllUsers();
     const responseObj = await response.json();
@@ -47,7 +48,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
   test('should get user by query params - [GET] /users?query=param', async () => {
     await test.step('query by hobbie 1', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Tennis'});
+      const response = await usersService.getAllUsers({ hobbie: 'Tennis' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(2);
@@ -161,7 +162,22 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
 
-  test('create new user - [POST] /users', async() => {
-    //
+  test('create new user - [POST] /users @post', async () => {
+    const authorizedUser = {
+      ...mockData.generateMockUser(),
+      roles: ['admin']
+    }
+
+    const userToCreate = mockData.generateMockUser();
+    const response = await usersService.createUser(userToCreate, {
+      username: authorizedUser.username,
+      password: authorizedUser.password
+    });
+    
+    const responseBody = await response.json();
+    logger.log(responseBody);
+
+    expect(response.status()).toBe(StatusCode.OK);
+
   })
 })
