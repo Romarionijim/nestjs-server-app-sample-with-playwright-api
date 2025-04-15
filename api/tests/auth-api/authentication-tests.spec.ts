@@ -1,11 +1,10 @@
 import { expect } from '@playwright/test';
-import { test } from '@api-infra';
-import { StatusCode } from 'api/enums/status-codes.enum';
-import { TestTags } from 'api/enums/test-tags.enum';
-import { AuthService } from 'api/infra/services/auth/auth.service';
-import { logger } from 'api/logger/custom.logger';
-import { User } from 'api/types/user/user.types';
-import { MockData } from 'api/utils/mocks/mocks';
+import {
+  test,
+  StatusCode,
+  TestTags,
+  User
+} from '@api-infra';
 
 test.describe('Authentication api tests', { tag: TestTags.AUTH }, async () => {
   let adminUser: User;
