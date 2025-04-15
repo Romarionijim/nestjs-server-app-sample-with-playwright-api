@@ -79,14 +79,9 @@ export class ApiClient {
   private async getAccessToken<T>(
     options: RequestOptions<T>,
   ) {
-    if (this.access_token) {
-      return this.access_token;
-    }
-
-    if (options.isAuthRequired) {
+    if (!this.access_token) {
       throw new Error('Authentication required but no access token available. Please login first.');
     }
-    
-    return null;
+    return this.access_token;
   }
 }
