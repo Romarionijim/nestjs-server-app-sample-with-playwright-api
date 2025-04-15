@@ -46,8 +46,8 @@ test.describe('Authentication api tests', { tag: TestTags.AUTH }, async () => {
       const response = await authenticationService.getProfile();
       const responseBody = await response.json();
       expect(responseBody.roles).toStrictEqual(['admin']);
-      expect(responseBody.iat).toBeTruthy(); //the time when thr jwt was issued
-      expect(responseBody.exp).toBeTruthy(); //expra
+      expect(responseBody.iat).toBeTruthy();
+      expect(responseBody.exp).toBeTruthy();
     });
   });
 })
