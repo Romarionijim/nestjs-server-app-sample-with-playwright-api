@@ -10,6 +10,16 @@ export class UsersService {
     this.apiClient = new ApiClient(BaseUrl.LOCAL_HOST);
   }
 
+  async authenticate(username: string, password: string) {
+    const response = await this.apiClient.post(EndPoint.LOGIN, {
+      data: { username, password },
+      isAuthRequired: true
+    });
+    const { access_token } = await response.json();
+    await this.apiClient.setToken(access_token);
+    return access_token;
+  }
+
   async getAllUsers(queryParams?: { [key: string]: string | number | boolean; }) {
     return await this.apiClient.get(EndPoint.USERS, { queryParams });
   }
@@ -18,7 +28,11 @@ export class UsersService {
     return await this.apiClient.get(`${EndPoint.USERS}/${id}`);
   }
 
-  async createUser(user: User) {
+  async createUser(user: User, adminCredentials?: { username: string, password: string }) {
+    const isAuthenticated = await this.apiClient.isAuthenticated();
+    if(!isAuthenticated && adminCredentials !== undefined) {
+      await this.authenticate(adminCredentials.username, adminCredentials.password);
+    } 
     return await this.apiClient.post(EndPoint.USERS, {
       data: user,
       isAuthRequired: true
