@@ -50,6 +50,12 @@ export class ApiClient {
     return !!this.access_token;
   }
 
+  async dispose() {
+    if (this.requestContext) {
+      await this.requestContext.dispose();
+    }
+  }
+
   private async makeHttpRequest<T>(method: RequestMethod, endPoint: string, options: RequestOptions<T> = {}) {
     let response: APIResponse;
     let headers: Record<string, string> = {
