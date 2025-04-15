@@ -2,17 +2,27 @@ import { test, expect } from '@playwright/test';
 import { AuthService, TestTags, StatusCode, UsersService, MockData } from '@api-infra';
 import { usersTestData } from './users-crud-test-data';
 import { logger } from 'api/logger/custom.logger';
+import { EndPoint } from '@api-infra';
 
 test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
   let usersService: UsersService;
   let authService: AuthService;
   let mockData: MockData;
+  
+  // Admin credentials to use throughout tests
+  const adminCredentials = {
+    username: `admin${Date.now()}`,
+    password: 'adminPassword123'
+  };
 
   test.beforeEach(async ({ request }) => {
     usersService = new UsersService();
     authService = new AuthService();
     mockData = new MockData();
-  })
+    
+    // Authenticate once at the beginning
+    await usersService.authenticate(adminCredentials.username, adminCredentials.password);
+  });
 
   test('should get all users - [GET] /users', async () => {
     const response = await usersService.getAllUsers();
@@ -163,21 +173,39 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
 
   test('create new user - [POST] /users @post', async () => {
-    const authorizedUser = {
-      ...mockData.generateMockUser(),
-      roles: ['admin']
-    }
-
     const userToCreate = mockData.generateMockUser();
-    const response = await usersService.createUser(userToCreate, {
-      username: authorizedUser.username,
-      password: authorizedUser.password
-    });
+    const response = await usersService.createUser(userToCreate);
     
     const responseBody = await response.json();
     logger.log(responseBody);
 
     expect(response.status()).toBe(StatusCode.OK);
+  });
 
-  })
+  test('update user - [PUT] /users/:id @put', async () => {
+    // Create a user first
+    const userToCreate = mockData.generateMockUser();
+    const createResponse = await usersService.createUser(userToCreate);
+    const createdUser = await createResponse.json();
+    
+    // Update the user
+    const updatedFields = { 
+      name: 'Updated Name',
+      lastName: 'Updated LastName'
+    };
+    
+    const response = await usersService.updateUser(createdUser.id, updatedFields);
+    expect(response.status()).toBe(StatusCode.OK);
+  });
+
+  test('delete user - [DELETE] /users/:id @delete', async () => {
+    // Create a user first
+    const userToCreate = mockData.generateMockUser();
+    const createResponse = await usersService.createUser(userToCreate);
+    const createdUser = await createResponse.json();
+    
+    // Delete the user
+    const response = await usersService.deleteUser(createdUser.id);
+    expect(response.status()).toBe(StatusCode.OK);
+  });
 })
