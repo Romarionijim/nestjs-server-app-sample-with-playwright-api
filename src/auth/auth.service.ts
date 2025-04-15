@@ -37,7 +37,8 @@ export class AuthService {
 
     return {
       ...result,
-      access_token: await this.jwtService.signAsync(payloadToSign)
+      access_token: await this.jwtService.signAsync(payloadToSign),
+      message: 'registered in successfully!'
     };
   }
 
@@ -57,7 +58,8 @@ export class AuthService {
 
         return {
           ...userWithoutExposedPassword,
-          access_token: await this.jwtService.signAsync(payLoadToSign)
+          access_token: await this.jwtService.signAsync(payLoadToSign),
+          message: 'logged in successfully!'
         };
       }
 

@@ -14,12 +14,12 @@ export class UsersController {
   @Get()
   @ApiQuery({ required: false })
   async findAll(@Query() query: Partial<UserDto> = {}) {
-    return this.usersService.findAll(query);
+    return await this.usersService.findAll(query);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+    return await this.usersService.findOne(id);
   }
 
   @Post()

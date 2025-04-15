@@ -3,4 +3,5 @@ export class RequestOptions<T> {
   multiPartData?: boolean;
   data?: T;
   isAuthRequired?: boolean;
+  registerUser?: boolean;
 }

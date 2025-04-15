@@ -51,7 +51,7 @@ export class ApiClient {
     }
 
     if (options.isAuthRequired) {
-      const authAccessToken = await this.getAccessToken(options, headers);
+      const authAccessToken = await this.getAccessToken(options);
       headers['Authorization'] = `Bearer ${authAccessToken}`;
     }
 
@@ -78,28 +78,9 @@ export class ApiClient {
 
   private async getAccessToken<T>(
     options: RequestOptions<T>,
-    headers: Record<string, string>,
   ) {
     if (!this.access_token) {
-
-      if (!options.data || !options.data['username'] || !options.data['password']) {
-        throw new Error('Username and password are required for authentication');
-      }
-
-      const credentials = {
-        username: options.data['username'],
-        password: options.data['password']
-      };
-
-      await this.request.post(`${this.baseUrl}/register`, { data: options.data, headers })
-      const responseBody = await this.request.post(`${this.baseUrl}/login`, { data: credentials, headers })
-      const { access_token } = await responseBody.json();
-
-      if (!access_token) {
-        throw new Error('Failed to get access token after login');
-      }
-      await this.setToken(access_token);
-      return access_token;
+      throw new Error('Authentication required but no access token available. Please login first.');
     }
     return this.access_token;
   }
