@@ -16,8 +16,7 @@ test.describe('Authentication api tests', { tag: TestTags.AUTH }, async () => {
       roles: ['admin']
     }
   })
-  test('should register user and login user', async ({ authenticationService, mockUser }) => {
-
+  test('should register user and login user', async ({ authenticationService }) => {
     await test.step('should register and create user successfully - [POST] /auth/register', async () => {
       const response = await authenticationService.register(adminUser);
       const responseBody = await response.json();
