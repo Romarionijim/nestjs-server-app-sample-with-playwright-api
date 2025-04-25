@@ -22,10 +22,9 @@ export const authFixtures = base.extend<AuthFixtures>({
 
   mockCredentials: async ({ authenticationService: authService, mockUser }, use) => {
     const response = await authService.register(mockUser);
-    const responseBody = await response.json();
     await use({
-      username: responseBody.username,
-      password: responseBody.password
+      username: response.body.username,
+      password: response.body.password
     })
   }
 })
