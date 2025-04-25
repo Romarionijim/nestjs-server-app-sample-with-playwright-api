@@ -4,7 +4,7 @@ export const usersTestData = [
     name: 'John',
     lastName: 'Doe',
     username: 'johndoe',
-    password: 'password1234',
+    password: 'secret',
     hobbie: 'Basketball',
     gender: 'male',
     roles: ['admin']
@@ -14,7 +14,7 @@ export const usersTestData = [
     name: 'Jane',
     lastName: 'Smith',
     username: 'janesmith',
-    password: 'password1234',
+    password: 'secret',
     hobbie: 'Tennis',
     gender: 'female',
     roles: ['user']
@@ -24,7 +24,7 @@ export const usersTestData = [
     name: 'Sara',
     lastName: 'James',
     username: 'sarajames',
-    password: 'password1234',
+    password: 'secret',
     hobbie: 'Volleyball',
     gender: 'female',
     roles: ['user']
@@ -34,7 +34,7 @@ export const usersTestData = [
     name: 'James',
     lastName: 'Jones',
     username: 'jamesjones',
-    password: 'password1234',
+    password: 'secret',
     hobbie: 'Football',
     gender: 'male',
     roles: ['user']

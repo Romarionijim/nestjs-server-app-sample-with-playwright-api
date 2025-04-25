@@ -24,6 +24,12 @@ export default defineConfig({
     ['json', { outputFile: './api/results.json' }],
     ['junit', { outputFile: './api/results.xml' }]
   ],
+
+  webServer: {
+    command: 'npm run start:dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI
+  },
   use: {
     trace: 'on-first-retry',
   },

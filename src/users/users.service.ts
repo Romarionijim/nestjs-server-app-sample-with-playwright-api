@@ -4,7 +4,7 @@ import { usersInMemoryData } from './db/in-memory.db';
 
 @Injectable()
 export class UsersService {
- 
+
   async findAll(query: Partial<UserDto> = {}) {
     const secureUsers = usersInMemoryData.map(user => ({
       ...user,
