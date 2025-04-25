@@ -36,6 +36,7 @@ export class ApiClient {
   }
 
   async setToken(token: string) {
+    
     this.access_token = token;
   }
 
