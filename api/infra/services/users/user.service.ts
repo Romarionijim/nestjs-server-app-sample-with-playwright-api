@@ -85,7 +85,7 @@ export class UsersService {
     });
   }
 
-  private async ensureAuthenticatd(admin: {
+  private async ensureAuthenticated(admin: {
     username?: string,
     password?: string
   } = {}
