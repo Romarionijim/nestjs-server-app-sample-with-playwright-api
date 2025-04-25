@@ -4,35 +4,50 @@ import { EndPoint } from "api/enums/endpoints.enum";
 import { ApiClient } from "api/infra/api-client";
 import { User } from "api/types/user/user.types";
 
-export class AuthService extends ApiClient {
+export class AuthService {
+  apiClient: ApiClient;
 
   constructor(request: APIRequestContext) {
-    super(request, BaseUrl.LOCAL_HOST);
+    this.apiClient = new ApiClient(request, BaseUrl.LOCAL_HOST);
   }
 
   async register(data: User) {
-    const response = await this.post(`${EndPoint.AUTH}/${EndPoint.REGISTER}`, { data });
-    const responseBody = await response.json();
-    
-    if (responseBody.access_token) {
-      await this.setToken(responseBody.access_token);
+    const response = await this.apiClient.post(`${EndPoint.AUTH}/${EndPoint.REGISTER}`, { data });
+    const { access_token, ...responseBody } = await response.json();
+
+    if (access_token) {
+      await this.apiClient.setToken(access_token);
     }
-    
-    return response;
+
+    return {
+      response,
+      body: responseBody,
+      access_token: access_token
+    }
   }
 
   async login(credentials: { username: string, password: string }) {
-    const response = await this.post(`${EndPoint.AUTH}/${EndPoint.LOGIN}`, { data: credentials });
-    const responseBody = await response.json();
-    
-    if (responseBody.access_token) {
-      await this.setToken(responseBody.access_token);
+    const response = await this.apiClient.post(
+      `${EndPoint.AUTH}/${EndPoint.LOGIN}`,
+      { data: credentials }
+    );
+    const { access_token, ...responseBody } = await response.json();
+
+    if (access_token) {
+      await this.apiClient.setToken(access_token);
     }
-    
-    return response;
+
+    return {
+      response,
+      body: responseBody,
+      access_token: access_token
+    }
   }
 
   async getProfile() {
-    return await this.get(`${EndPoint.AUTH}/${EndPoint.PROFILE}`, { isAuthRequired: true });
+    return await this.apiClient.get(
+      `${EndPoint.AUTH}/${EndPoint.PROFILE}`,
+      { isAuthRequired: true }
+    );
   }
 }
