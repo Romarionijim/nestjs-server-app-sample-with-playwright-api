@@ -1,18 +1,20 @@
 import { test, expect } from '@playwright/test';
-import { AuthService, TestTags, StatusCode, UsersService, MockData } from '@api-infra';
+import { AuthService, TestTags, StatusCode, UsersService, MockData, User } from '@api-infra';
 import { usersTestData } from './users-crud-test-data';
 
 test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
   let usersService: UsersService;
   let authService: AuthService;
   let mockData: MockData;
+  let randomUser: User;
 
   test.beforeEach(async ({ request }) => {
     usersService = new UsersService(request);
     authService = new AuthService(request);
     mockData = new MockData();
+    randomUser = mockData.generateMockUser();
   })
-  
+
   test('should get all users - [GET] /users', async () => {
     const response = await usersService.getAllUsers();
     const responseObj = await response.json();
@@ -23,7 +25,6 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   })
 
   test('should get user by id - [GET] /users/:id', async () => {
-
     await test.step('get user by id 1', async () => {
       const response = await usersService.getUser(1);
       const userData = await response.json();
@@ -47,7 +48,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
   test('should get user by query params - [GET] /users?query=param', async () => {
     await test.step('query by hobbie 1', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Tennis'});
+      const response = await usersService.getAllUsers({ hobbie: 'Tennis' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(2);
@@ -161,7 +162,29 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
 
-  test('create new user - [POST] /users', async() => {
-    //
+  test('create new user - [POST] /users', async () => {
+    let adminUser = {
+      ...mockData.generateMockUser(),
+      gender: 'male',
+      roles: ['admin']
+    }
+
+    await authService.register(adminUser);
+    await authService.login({
+      username: adminUser.username,
+      password: adminUser.password
+    })
+
+    const response = await usersService.createUser(randomUser, {
+      username: adminUser.username,
+      password: adminUser.password
+    });
+
+    const responseBody = await response.json();
+
+    expect(response.status()).toBe(StatusCode.CREATED);
+    expect(responseBody).toBeDefined();
+    expect(responseBody).toEqual(randomUser);
+
   })
 })
