@@ -164,21 +164,14 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
   test('create new user - [POST] /users', async () => {
     let adminUser = {
-      ...mockData.generateMockUser(),
-      gender: 'male',
+      ...mockData.generateMockUser('male'),
       roles: ['admin']
     }
 
     await authService.register(adminUser);
-    await authService.login({
-      username: adminUser.username,
-      password: adminUser.password
-    })
+  
 
-    const response = await usersService.createUser(randomUser, {
-      username: adminUser.username,
-      password: adminUser.password
-    });
+    const response = await usersService.createUser(randomUser, adminUser);
 
     const responseBody = await response.json();
 
