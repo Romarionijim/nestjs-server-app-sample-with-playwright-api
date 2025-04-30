@@ -168,16 +168,16 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
       roles: ['admin']
     }
 
-    await authService.register(adminUser);
-  
-
-    const response = await usersService.createUser(randomUser, adminUser);
+    const response = await usersService.createUser(
+      randomUser,
+      adminUser
+    );
 
     const responseBody = await response.json();
 
     expect(response.status()).toBe(StatusCode.CREATED);
     expect(responseBody).toBeDefined();
-    expect(responseBody.name).toBe(randomUser.name); 
-    expect(responseBody.lastName).toBe(randomUser.lastName); 
+    expect(responseBody.name).toBe(randomUser.name);
+    expect(responseBody.lastName).toBe(randomUser.lastName);
   })
 })
