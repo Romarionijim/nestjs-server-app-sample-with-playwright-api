@@ -24,11 +24,11 @@ export class UsersService {
 
   async createUser(
     userToCreate: User,
-    user?: User
+    adminUser?: User
   ) {
 
-    if (user) {
-      await this.ensureAuthenticated(user);
+    if (adminUser) {
+      await this.ensureAuthenticated(adminUser);
     }
 
     return await this.apiClient.post(EndPoint.USERS, {
@@ -75,22 +75,25 @@ export class UsersService {
   }
 
   private async ensureAuthenticated(user: User) {
-    const username = user.username || process.env.ADMIN_USER as string;
-    const password = user.password || process.env.ADMIN_PASSWORD as string;
+    const username = user.username
+    const password = user.password
 
-    const currentUser = await this.getAllUsers({ username: user.username });
-    if (!currentUser && user) {
+
+    const userResponse = await this.getAllUsers({ username });
+    const userData = await userResponse.json();
+
+    if (!userData[0]) {
       await this.authService.register(user);
-    }
+    } else {
+      const token = await this.apiClient.getToken();
 
-    const token = await this.apiClient.getToken();
-
-    if (!token) {
-      const { access_token } = await this.authService.login({
-        username: user.username,
-        password: user.password
-      })
-      await this.apiClient.setToken(access_token);
+      if (!token) {
+        const { access_token } = await this.authService.login({
+          username,
+          password
+        });
+        await this.apiClient.setToken(access_token);
+      }
     }
   }
 }
