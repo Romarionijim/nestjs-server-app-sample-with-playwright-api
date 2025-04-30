@@ -179,6 +179,5 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     expect(responseBody).toBeDefined();
     expect(responseBody.name).toBe(randomUser.name); 
     expect(responseBody.lastName).toBe(randomUser.lastName); 
-
   })
 })
