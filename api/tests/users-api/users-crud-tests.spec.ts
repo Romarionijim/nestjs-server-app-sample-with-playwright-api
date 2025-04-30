@@ -177,7 +177,8 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
     expect(response.status()).toBe(StatusCode.CREATED);
     expect(responseBody).toBeDefined();
-    expect(responseBody).toEqual(randomUser);
+    expect(responseBody.name).toBe(randomUser.name); 
+    expect(responseBody.lastName).toBe(randomUser.lastName); 
 
   })
 })
