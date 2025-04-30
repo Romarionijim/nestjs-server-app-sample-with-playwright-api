@@ -6,13 +6,13 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   let usersService: UsersService;
   let authService: AuthService;
   let mockData: MockData;
-  let randomUser: User;
+  let userToCreate: User;
 
   test.beforeEach(async ({ request }) => {
     usersService = new UsersService(request);
     authService = new AuthService(request);
     mockData = new MockData();
-    randomUser = mockData.generateMockUser();
+    userToCreate = mockData.generateMockUser();
   })
 
   test('should get all users - [GET] /users', async () => {
@@ -169,7 +169,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     }
 
     const response = await usersService.createUser(
-      randomUser,
+      userToCreate,
       adminUser
     );
 
@@ -177,7 +177,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
 
     expect(response.status()).toBe(StatusCode.CREATED);
     expect(responseBody).toBeDefined();
-    expect(responseBody.name).toBe(randomUser.name);
-    expect(responseBody.lastName).toBe(randomUser.lastName);
+    expect(responseBody.name).toBe(userToCreate.name);
+    expect(responseBody.lastName).toBe(userToCreate.lastName);
   })
 })
