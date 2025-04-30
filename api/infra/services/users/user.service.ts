@@ -37,15 +37,14 @@ export class UsersService {
     });
   }
 
-  async updateUser(id: number, updatedFields: User) {
-    const token = await this.apiClient.getToken();
+  async updateUser(
+    id: number,
+    updatedFields: User,
+    adminUser?: User
+  ) {
 
-    if (!token) {
-      const { access_token } = await this.authService.login({
-        username: updatedFields.username,
-        password: updatedFields.password
-      })
-      await this.apiClient.setToken(access_token)
+    if (adminUser) {
+      await this.ensureAuthenticated(adminUser);
     }
 
     return await this.apiClient.put(`${EndPoint.USERS}/${id}`, {
@@ -54,20 +53,11 @@ export class UsersService {
     });
   }
 
-  async deleteUser(id: number, admin: {
-    username?: string,
-    password?: string
-  } = {}
+  async deleteUser(
+    id: number,
+    admin: User
   ) {
-    const token = await this.apiClient.getToken();
-
-    if (!token) {
-      const { access_token } = await this.authService.login({
-        username: admin.username!,
-        password: admin.password!
-      })
-      await this.apiClient.setToken(access_token)
-    }
+    await this.ensureAuthenticated(admin);
 
     return await this.apiClient.delete(`${EndPoint.USERS}/${id}`, {
       isAuthRequired: true
@@ -78,22 +68,19 @@ export class UsersService {
     const username = user.username
     const password = user.password
 
-
     const userResponse = await this.getAllUsers({ username });
     const userData = await userResponse.json();
 
     if (!userData[0]) {
       await this.authService.register(user);
-    } else {
-      const token = await this.apiClient.getToken();
-
-      if (!token) {
-        const { access_token } = await this.authService.login({
-          username,
-          password
-        });
-        await this.apiClient.setToken(access_token);
-      }
+    }
+    const token = await this.apiClient.getToken();
+    if (!token) {
+      const { access_token } = await this.authService.login({
+        username,
+        password
+      });
+      await this.apiClient.setToken(access_token);
     }
   }
 }
