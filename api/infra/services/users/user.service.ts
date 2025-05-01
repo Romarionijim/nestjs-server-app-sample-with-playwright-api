@@ -87,7 +87,7 @@ export class UsersService {
         await this.apiClient.setToken(access_token);
       }
     } catch (error) {
-      throw error;
+      throw new Error(`an error occured in ensureAuthenticated() function: ${error}`);
     }
   }
 }
