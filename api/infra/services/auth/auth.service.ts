@@ -15,9 +15,11 @@ export class AuthService {
     const response = await this.apiClient.post(`${EndPoint.AUTH}/${EndPoint.REGISTER}`, { data });
     const { access_token, ...responseBody } = await response.json();
 
-    if (access_token) {
-      await this.apiClient.setToken(access_token);
+    if (!access_token) {
+      throw new Error('Access token was not provided by the server when registering a user!');
     }
+
+    await this.apiClient.setToken(access_token);
 
     return {
       response,
@@ -33,9 +35,11 @@ export class AuthService {
     );
     const { access_token, ...responseBody } = await response.json();
 
-    if (access_token) {
-      await this.apiClient.setToken(access_token);
+    if (!access_token) {
+      throw new Error('Access token was not provided by the server on login!')
     }
+
+    await this.apiClient.setToken(access_token);
 
     return {
       response,
