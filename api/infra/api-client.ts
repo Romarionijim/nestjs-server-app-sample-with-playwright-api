@@ -7,7 +7,6 @@ export class ApiClient {
   private access_token: string;
 
   constructor(public request: APIRequestContext, baseUrl: string) {
-    this.request = request;
     this.baseUrl = baseUrl;
   }
 
@@ -51,7 +50,7 @@ export class ApiClient {
     }
 
     if (options.isAuthRequired) {
-      const authAccessToken = await this.getAccessToken(options);
+      const authAccessToken = await this.getAccessToken();
       headers['Authorization'] = `Bearer ${authAccessToken}`;
     }
 
@@ -76,9 +75,7 @@ export class ApiClient {
     return response;
   }
 
-  private async getAccessToken<T>(
-    options: RequestOptions<T>,
-  ) {
+  private async getAccessToken() {
     if (!this.access_token) {
       throw new Error('Authentication required but no access token available. Please login first.');
     }
