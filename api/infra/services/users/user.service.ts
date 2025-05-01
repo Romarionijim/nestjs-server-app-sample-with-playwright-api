@@ -4,6 +4,7 @@ import { BaseUrl } from "api/enums/application-urls.enum";
 import { EndPoint } from "api/enums/endpoints.enum";
 import { User } from "api/types/user/user.types";
 import { AuthService } from "../auth/auth.service";
+import { logger } from "api/logger/custom.logger";
 
 export class UsersService {
   apiClient: ApiClient;
@@ -65,22 +66,28 @@ export class UsersService {
   }
 
   private async ensureAuthenticated(user: User) {
-    const username = user.username
-    const password = user.password
+    try {
+      const username = user.username
+      const password = user.password
 
-    const userResponse = await this.getAllUsers({ username });
-    const userData = await userResponse.json();
+      const userResponse = await this.getAllUsers({ username });
+      const userData = await userResponse.json();
 
-    if (!userData[0]) {
-      await this.authService.register(user);
-    }
-    const token = await this.apiClient.getToken();
-    if (!token) {
-      const { access_token } = await this.authService.login({
-        username,
-        password
-      });
-      await this.apiClient.setToken(access_token);
+      if (!userData[0]) {
+        const registerReponse = await this.authService.register(user);
+        logger.log(`user register response status code: ${registerReponse.response.status()}`);
+      }
+
+      const token = await this.apiClient.getToken();
+      if (!token) {
+        const { access_token } = await this.authService.login({
+          username,
+          password
+        });
+        await this.apiClient.setToken(access_token);
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }
