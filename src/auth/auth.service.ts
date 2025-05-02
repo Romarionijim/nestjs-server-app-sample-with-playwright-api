@@ -12,58 +12,65 @@ export class AuthService {
   ) { }
 
   async register(userData: UserDto) {
-    const currentUser = await this.usersService.findOneByUsername(userData.username);
-    if (currentUser) {
-      throw new HttpException(`user with the username ${userData.username} already exists`, HttpStatus.BAD_REQUEST);
+    try {
+      const currentUser = await this.usersService.findOneByUsername(userData.username);
+      if (currentUser) {
+        throw new HttpException(`user with the username ${userData.username} already exists`, HttpStatus.BAD_REQUEST);
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(userData.password, salt);
+
+      const registeredUser = {
+        ...userData,
+        password: hashedPassword,
+        roles: userData.roles || ['user']
+      }
+
+      console.log('about to add: ', registeredUser);
+      const result = await this.usersService.createUser(registeredUser);
+      console.log('user added, result: ', result);
+
+      const payloadToSign = {
+        sub: result.id,
+        username: result.username,
+        roles: result.roles
+      }
+
+      return {
+        ...result,
+        access_token: await this.jwtService.signAsync(payloadToSign),
+        message: 'registered successfully!'
+      };
+    } catch (error) {
+      throw error;
     }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(userData.password, salt);
-
-    const registeredUser = {
-      ...userData,
-      password: hashedPassword,
-      roles: userData.roles || ['user']
-    }
-
-    console.log('about to add: ', registeredUser);
-    const result = await this.usersService.createUser(registeredUser);
-    console.log('user added, result: ', result);
-
-    const payloadToSign = {
-      sub: result.id,
-      username: result.username,
-      roles: result.roles
-    }
-
-    return {
-      ...result,
-      access_token: await this.jwtService.signAsync(payloadToSign),
-      message: 'registered in successfully!'
-    };
   }
 
   async login(username: string, password: string) {
-    const currentUser = await this.usersService.findOneByUsername(username);
-    if (currentUser) {
-      const isPasswordValid = await bcrypt.compare(password, currentUser.password)
+    try {
+      const currentUser = await this.usersService.findOneByUsername(username);
+      if (currentUser) {
+        const isPasswordValid = await bcrypt.compare(password, currentUser.password)
 
-      if (isPasswordValid) {
-        const { password, ...userWithoutExposedPassword } = currentUser;
+        if (isPasswordValid) {
+          const { password, ...userWithoutExposedPassword } = currentUser;
 
-        const payLoadToSign = {
-          sub: currentUser.id,
-          username: currentUser.username,
-          roles: currentUser.roles
+          const payLoadToSign = {
+            sub: currentUser.id,
+            username: currentUser.username,
+            roles: currentUser.roles
+          }
+
+          return {
+            ...userWithoutExposedPassword,
+            access_token: await this.jwtService.signAsync(payLoadToSign),
+            message: 'logged in successfully!'
+          };
         }
-
-        return {
-          ...userWithoutExposedPassword,
-          access_token: await this.jwtService.signAsync(payLoadToSign),
-          message: 'logged in successfully!'
-        };
+        return null;
       }
-
-      return null;
+    } catch (error) {
+      throw error;
     }
   }
 }

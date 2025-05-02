@@ -22,7 +22,7 @@ test.describe('Authentication api tests', { tag: TestTags.AUTH }, async () => {
       expect(response.response.status()).toBe(StatusCode.CREATED);
       expect(response.access_token).toBeDefined();
       expect(response.access_token).toBeTruthy();
-      expect(response.body.message).toBe('registered in successfully!');
+      expect(response.body.message).toBe('registered successfully!');
       expect(response.body.name).toBe(adminUser.name);
       expect(response.body.lastName).toBe(adminUser.lastName);
     });
