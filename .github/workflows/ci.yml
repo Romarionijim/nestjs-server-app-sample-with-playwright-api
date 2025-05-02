@@ -35,7 +35,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
         
     - name: setup and build app server
-      run: docker-compose up --build -d
+      run: docker compose -f docker-compose.yml up --build -d
 
   run_api_tests:
     name: Run API tests
