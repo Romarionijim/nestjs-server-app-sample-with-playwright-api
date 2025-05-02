@@ -2,8 +2,8 @@ services:
   db:
     image: postgres
     restart: always
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     container_name: postgres-db
     ports:
       - 5432:5432
