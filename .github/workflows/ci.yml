@@ -13,19 +13,17 @@ env:
   PGADMIN_DEFAULT_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
   POSTGRES_PASSWORD: ${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
 
-  
-    
 jobs:
-  test:
+  build_app:
+    name: Setup and Build server app
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        tags: ['@users', '@auth']
-
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
@@ -39,18 +37,39 @@ jobs:
     - name: setup and build app server
       run: docker-compose up --build -d
 
-    - name: Install dependencies
-      run: npm ci
+  run_api_tests:
+    name: Run API tests
+    runs-on: ubuntu-latest
+    needs: build_app
+    strategy:
+      matrix:
+        tags: ['@users', '@auth']
+      fail-fast: false
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+    steps:
+      - name: Checkout commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-    - name: Run Playwright tests
-      run: npx playwright test --grep ${{ matrix.tags }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      
+      - name: Install dependencies
+        run: npm ci
 
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report-${{ matrix.tags }}
-        path: playwright-report/
-        retention-days: 30
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test --grep ${{ matrix.tags }}
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ matrix.tags }}
+          path: playwright-report/
+          retention-days: 30
+
+
