@@ -7,9 +7,8 @@ test.describe.serial('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /us
   let mockData: MockData;
   let userToCreate: User;
 
-  test.beforeEach(async () => {
-    mockData = new MockData();
-    userToCreate = mockData.generateMockUser();
+  test.beforeEach(async ({ serviceFactory }) => {
+    userToCreate = serviceFactory.mockData.generateMockUser();
   })
 
   test('should get all users - [GET] /users', async ({ serviceFactory }) => {
@@ -161,7 +160,7 @@ test.describe.serial('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /us
 
   test('create new user - [POST] /users', async ({ serviceFactory }) => {
     let adminUser = {
-      ...mockData.generateMockUser('male'),
+      ...serviceFactory.mockData.generateMockUser('male'),
       roles: ['admin']
     }
 
