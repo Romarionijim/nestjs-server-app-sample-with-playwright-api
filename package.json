@@ -8,6 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "generate-barrels": "barrelsby --delete -d . -l below --exlcude spec.ts --exclude spec.js",
+    "merge-fixtures": "npx ts-node api/fixtures/scripts/generate-fixture-setup.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -18,8 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "test:api": "npx playwright test",
-    "generate-barrels": "barrelsby --delete -d . -l below --exlcude spec.ts --exclude spec.js"
+    "test:api": "npx playwright test"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
