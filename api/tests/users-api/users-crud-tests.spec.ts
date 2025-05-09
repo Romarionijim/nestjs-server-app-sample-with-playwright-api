@@ -1,10 +1,9 @@
 import { expect } from '@playwright/test';
 import { test } from '../../fixtures/merged-fixtures.fixture';
-import { AuthService, TestTags, StatusCode, UsersService, MockData, User } from '@api-infra';
+import { TestTags, StatusCode, User } from '@api-infra';
 import { usersTestData } from './users-crud-test-data';
 
 test.describe.serial('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
-  let mockData: MockData;
   let userToCreate: User;
 
   test.beforeEach(async ({ serviceFactory }) => {
