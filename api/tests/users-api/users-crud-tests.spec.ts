@@ -1,22 +1,18 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from '../../fixtures/merged-fixtures.fixture';
 import { AuthService, TestTags, StatusCode, UsersService, MockData, User } from '@api-infra';
 import { usersTestData } from './users-crud-test-data';
 
-test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
-  let usersService: UsersService;
-  let authService: AuthService;
+test.describe.serial('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', { tag: TestTags.USERS }, async () => {
   let mockData: MockData;
   let userToCreate: User;
 
-  test.beforeEach(async ({ request }) => {
-    usersService = new UsersService(request);
-    authService = new AuthService(request);
-    mockData = new MockData();
-    userToCreate = mockData.generateMockUser();
+  test.beforeEach(async ({ serviceFactory }) => {
+    userToCreate = serviceFactory.mockData.generateMockUser();
   })
 
-  test('should get all users - [GET] /users', async () => {
-    const response = await usersService.getAllUsers();
+  test('should get all users - [GET] /users', async ({ serviceFactory }) => {
+    const response = await serviceFactory.userService.getAllUsers();
     const responseObj = await response.json();
     await expect(response).toBeOK();
     expect(response.status()).toBe(StatusCode.OK);
@@ -24,9 +20,9 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     expect(responseObj).toStrictEqual(usersTestData);
   })
 
-  test('should get user by id - [GET] /users/:id', async () => {
+  test('should get user by id - [GET] /users/:id', async ({ serviceFactory }) => {
     await test.step('get user by id 1', async () => {
-      const response = await usersService.getUser(1);
+      const response = await serviceFactory.userService.getUser(1);
       const userData = await response.json();
       await expect(response).toBeOK();
       expect(response.status()).toBe(StatusCode.OK);
@@ -36,7 +32,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('get user by id 2', async () => {
-      const response = await usersService.getUser(2);
+      const response = await serviceFactory.userService.getUser(2);
       const userData = await response.json();
       await expect(response).toBeOK();
       expect(response.status()).toBe(StatusCode.OK);
@@ -46,9 +42,9 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
   })
 
-  test('should get user by query params - [GET] /users?query=param', async () => {
+  test('should get user by query params - [GET] /users?query=param', async ({ serviceFactory }) => {
     await test.step('query by hobbie 1', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Tennis' });
+      const response = await serviceFactory.userService.getAllUsers({ hobbie: 'Tennis' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(2);
@@ -56,7 +52,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by hobbie 2', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Football' });
+      const response = await serviceFactory.userService.getAllUsers({ hobbie: 'Football' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(4);
@@ -64,7 +60,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by hobbie 3', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Basketball' });
+      const response = await serviceFactory.userService.getAllUsers({ hobbie: 'Basketball' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(1);
@@ -72,7 +68,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by hobbie 4', async () => {
-      const response = await usersService.getAllUsers({ hobbie: 'Volleyball' });
+      const response = await serviceFactory.userService.getAllUsers({ hobbie: 'Volleyball' });
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(3);
@@ -80,7 +76,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by female gender', async () => {
-      const response = await usersService.getAllUsers({ gender: 'female' })
+      const response = await serviceFactory.userService.getAllUsers({ gender: 'female' })
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData).toStrictEqual([
@@ -109,7 +105,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by male gender', async () => {
-      const response = await usersService.getAllUsers({ gender: 'male' })
+      const response = await serviceFactory.userService.getAllUsers({ gender: 'male' })
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData).toStrictEqual([
@@ -137,7 +133,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by name', async () => {
-      const response = await usersService.getAllUsers({ name: 'John' })
+      const response = await serviceFactory.userService.getAllUsers({ name: 'John' })
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].id).toBe(1);
@@ -145,7 +141,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by username', async () => {
-      const response = await usersService.getAllUsers({ username: 'janesmith' })
+      const response = await serviceFactory.userService.getAllUsers({ username: 'janesmith' })
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].name).toBe('Jane');
@@ -153,7 +149,7 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
     });
 
     await test.step('query by lastname', async () => {
-      const response = await usersService.getAllUsers({ lastName: 'Jones' })
+      const response = await serviceFactory.userService.getAllUsers({ lastName: 'Jones' })
       const userData = await response.json();
       expect(response.status()).toBe(StatusCode.OK);
       expect(userData[0].name).toBe('James');
@@ -162,13 +158,13 @@ test.describe('Users entity API CRUD tests - [GET, POST, PUT, DELETE] /users', {
   });
 
 
-  test('create new user - [POST] /users', async () => {
+  test('create new user - [POST] /users', async ({ serviceFactory }) => {
     let adminUser = {
-      ...mockData.generateMockUser('male'),
+      ...serviceFactory.mockData.generateMockUser('male'),
       roles: ['admin']
     }
 
-    const response = await usersService.createUser(
+    const response = await serviceFactory.userService.createUser(
       userToCreate,
       adminUser
     );
