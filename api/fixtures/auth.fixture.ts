@@ -8,7 +8,7 @@ type AuthFixtures = {
   mockCredentials: { username: string, password: string }
 }
 
-export const authFixtures = base.extend<AuthFixtures>({
+export const authFixture = base.extend<AuthFixtures>({
   authenticationService: async ({ request }, use) => {
     const authService = new AuthService(request);
     await use(authService);

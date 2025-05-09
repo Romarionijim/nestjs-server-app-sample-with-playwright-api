@@ -5,7 +5,7 @@ type ServiceFactoryType = {
   serviceFactory: ServiceFactory;
 }
 
-export const serviceFactoryFixtures = base.extend<ServiceFactoryType>({
+export const globalFactoryFixture = base.extend<ServiceFactoryType>({
   serviceFactory: async ({ request }, use) => {
     const serviceFactory = new ServiceFactory(request);
     await use(serviceFactory);

@@ -7,7 +7,7 @@ type TestFixtures = {
   authService: AuthService;
 }
 
-export const serviceFixtures = base.extend<TestFixtures>({
+export const serviceFixture = base.extend<TestFixtures>({
   usersService: async ({ request }, use) => {
     await use(new UsersService(request))
   },
