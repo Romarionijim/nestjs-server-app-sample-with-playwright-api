@@ -32,7 +32,6 @@ for (let row of indexFileRows) {
   while ((matchVar = fixtureVarRegex.exec(fileContent)) !== null) {
     const varName = matchVar[1];
 
-    // **Generate correct relative path** from output path (all-pw-fixtures.fixture.ts)
     const importPathRelativeToOutput = relative(dirname(outputPath), absolutePath)
       .replace(/\.ts$/, '') // Remove file extension
       .replace(/\\/g, '/'); // Normalize for cross-platform compatibility
