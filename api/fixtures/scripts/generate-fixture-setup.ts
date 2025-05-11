@@ -35,8 +35,8 @@ if (require.main === module) {
       const varName = matchVar[1];
 
       const importPathRelativeToOutput = relative(dirname(outputPath), absolutePath)
-        .replace(/\.ts$/, '') // Remove file extension
-        .replace(/\\/g, '/'); // Normalize for cross-platform compatibility
+        .replace(/\.ts$/, '')
+        .replace(/\\/g, '/');
 
       imports.push(`import { ${varName} } from "./${importPathRelativeToOutput}";`);
       fixtureVars.push(varName);
