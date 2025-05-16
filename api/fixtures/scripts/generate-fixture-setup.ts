@@ -1,6 +1,5 @@
 import { resolve, dirname, relative } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
-import { r } from '@faker-js/faker/dist/airline-CBNP41sR';
 
 if (require.main === module) {
   const indexTsFilePath = resolve(__dirname, '../../index.ts');
