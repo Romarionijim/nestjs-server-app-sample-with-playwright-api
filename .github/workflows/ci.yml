@@ -81,7 +81,7 @@ jobs:
   deploy_to_dockerHub:
     name: Deploy to Docker Hub
     needs: build_and_run_api_tests
-    if: ${{ needs.build_and_run_api_tests.result == 'success' && github.event_name == 'push' }}
+    if: ${{ needs.build_and_run_api_tests.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
