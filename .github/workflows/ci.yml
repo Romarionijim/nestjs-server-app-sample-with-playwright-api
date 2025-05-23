@@ -37,7 +37,7 @@ jobs:
 
     - name: Login to Docker Hub
       uses: docker/login-action@v3
-      with:
+      with: 
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
         
@@ -57,5 +57,5 @@ jobs:
       if: ${{ !cancelled() }}
       with:
         name: playwright-report-${{ matrix.tags }}
-        path: playwright-report/
+        path: api/playwright-report/
         retention-days: 30
