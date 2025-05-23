@@ -18,19 +18,17 @@ runs:
       id: node-modules-cache
       with:
         path: |
-          api/node_modules
-        key: api-modules-${{ hashFiles('api/package-lock.json') }}
+          node_modules
+        key: node-modules-${{ hashFiles('package-lock.json') }}
 
     - name: 📦 Install dependencies
       shell: bash
-      working-directory: ./api
       run: npm ci
       if: steps.node-modules-cache.outputs.cache-hit != 'true'
 
     - name: Get installed Playwright version
       id: playwright-version
       shell: bash
-      working-directory: ./api
       run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages[''].devDependencies['@playwright/test'])")" >> $GITHUB_ENV
 
     - name: Cache playwright binaries
@@ -44,10 +42,8 @@ runs:
     - name: 📦🌐 Install Playwright dependencies 
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       shell: bash
-      working-directory: ./api
       run: npx playwright install --with-deps
 
     - name: Run API tests
       shell: bash
-      working-directory: ./api
       run: npx playwright test --grep ${{ inputs.tags }}

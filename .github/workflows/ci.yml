@@ -65,19 +65,6 @@ jobs:
           exit 1
         fi
 
-    - name: 🫙 Cache node modules
-      uses: actions/cache@v4
-      id: node-modules-cache
-      with:
-        path: |
-          node_modules
-        key: modules-${{ hashFiles('package-lock.json') }}
-
-    - name: 📦 Install dependencies
-      shell: bash
-      run: npm ci
-      if: steps.node-modules-cache.outputs.cache-hit != 'true'
-
     - name: Run API Tests
       id: run-api-tests
       uses: ./.github/actions/run-api-tests
