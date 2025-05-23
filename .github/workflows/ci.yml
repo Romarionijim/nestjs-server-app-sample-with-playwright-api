@@ -77,3 +77,21 @@ jobs:
         name: playwright-report-${{ matrix.tags }}
         path: api/playwright-report/
         retention-days: 30
+
+  deploy_to_dockerHub:
+    name: Deploy to Docker Hub
+    needs: build_and_run_api_tests
+    if: ${{ needs.build_and_run_api_tests.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          docker build -f Dockerfile  -t ${{ secrets.DOCKERHUB_USERNAME }}/nestjs-server-app:latest .
+          echo "Pushing Docker image to Docker Hub..."
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/nestjs-server-app:latest
