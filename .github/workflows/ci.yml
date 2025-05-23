@@ -80,10 +80,9 @@ jobs:
 
     - name: Run API Tests
       id: run-api-tests
-      uses: ./github/actions/run-api-tests
+      uses: ./.github/actions/run-api-tests
       with:
         tags: ${{ matrix.tags }}
-      continue-on-error: true
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
