@@ -78,7 +78,7 @@ jobs:
         path: api/playwright-report/
         retention-days: 30
 
-  Deploy_to_DockerHub:
+  deploy_to_dockerHub:
     name: Deploy to Docker Hub
     needs: build_and_run_api_tests
     if: ${{ needs.build_and_run_api_tests.result == 'success' && github.event_name == 'push' }}
