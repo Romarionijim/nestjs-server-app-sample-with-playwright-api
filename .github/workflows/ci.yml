@@ -65,14 +65,11 @@ jobs:
           exit 1
         fi
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-
-    - name: Run Playwright tests
-      run: npx playwright test --grep ${{ matrix.tags }}
+    - name: Run API Tests
+      id: run-api-tests
+      uses: ./.github/actions/run-api-tests
+      with:
+        tags: ${{ matrix.tags }}
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
